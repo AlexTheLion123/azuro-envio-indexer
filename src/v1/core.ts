@@ -14,9 +14,84 @@ import {
 import { getTokenForPool } from "../contracts/lpv1";
 
 import { createPoolEntity } from "../common/pool";
+import { createCoreContractEntity } from "../common/factory";
 
-CoreContract_ConditionCreated_loader(({ event, context }) => {});
-CoreContract_ConditionCreated_handler(({ event, context }) => {});
+CoreContract_ConditionCreated_loader(({ event, context }) => {
+  context.CoreContract.load(event.srcAddress, {})
+});
+CoreContract_ConditionCreated_handler(({ event, context }) => {
+  const coreContractEntity = context.CoreContract.get(event.srcAddress);   
+
+  if(!coreContractEntity){
+    context.log.error('coreContractEntity not found')
+  }
+
+  const conditionId = event.params.conditionId
+  const startsAt = event.params.timestamp
+
+  // const coreContractEntity = CoreContract.load(event.address.toHexString())
+
+  // // TODO remove later
+  // if (!coreContractEntity) {
+  //   log.error('v1 ConditionCreated coreContractEntity not found. coreContractEntityId = {}', [
+  //     event.address.toHexString(),
+  //   ])
+
+  //   return
+  // }
+
+  // const conditionId = event.params.conditionId
+  // const startsAt = event.params.timestamp
+
+
+  // TODO
+  // const coreSC = CoreV1.bind(event.address)
+  // const conditionData = coreSC.try_getCondition(conditionId)
+
+  // if (conditionData.reverted) {
+  //   log.error('getCondition reverted. conditionId = {}', [conditionId.toString()])
+
+  //   return
+  // }
+
+  // const coreAddress = event.address.toHexString()
+  // const liquidityPoolAddress = CoreContract.load(coreAddress)!.liquidityPool
+
+  // const gameEntity = createGame(
+  //   liquidityPoolAddress,
+  //   null,
+  //   conditionData.value.ipfsHash,
+  //   null,
+  //   startsAt,
+  //   null,
+  //   event.transaction.hash.toHexString(),
+  //   event.block,
+  // )
+
+  // // TODO remove later
+  // if (!gameEntity) {
+  //   log.error('v1 ConditionCreated can\'t create game. conditionId = {}', [conditionId.toString()])
+
+  //   return
+  // }
+
+  // createCondition(
+  //   VERSION_V1,
+  //   coreAddress,
+  //   conditionId,
+  //   gameEntity.id,
+  //   conditionData.value.margin,
+  //   conditionData.value.reinforcement,
+  //   conditionData.value.outcomes,
+  //   conditionData.value.fundBank,
+  //   1,
+  //   false,
+  //   gameEntity.provider,
+  //   event.transaction.hash.toHexString(),
+  //   event.block,
+  //   startsAt,
+  // )
+});
 
 CoreContract_ConditionResolved_loader(({ event, context }) => {});
 CoreContract_ConditionResolved_handler(({ event, context }) => {});
@@ -29,6 +104,7 @@ CoreContract_ConditionStopped_handler(({ event, context }) => {});
 
 CoreContract_LpChanged_loader(async ({ event, context }) => {
   await context.contractRegistration.addLP(event.params.newLp);
+  context.CoreContract.load(event.srcAddress,{});
 });
 
 CoreContract_LpChanged_handler(async ({ event, context }) => {
@@ -47,4 +123,19 @@ CoreContract_LpChanged_handler(async ({ event, context }) => {
   );
 
   context.LiquidityPoolContract.set(pool);
+  
+  const coreContractEntity = context.CoreContract.get(event.srcAddress); 
+
+  if (!coreContractEntity) {
+    let coreContract = createCoreContractEntity(event.srcAddress, newLp, "v1");
+    context.CoreContract.set(coreContract);
+  }
+
+
+
+  // let coreContractEntity = CoreContract.load(coreAddress)
+
+  // if (!coreContractEntity) {
+  //   coreContractEntity = createCoreEntity(coreAddress, liquidityPoolContractEntity, CORE_TYPE_PRE_MATCH)
+  // }
 });

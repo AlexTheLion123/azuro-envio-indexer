@@ -43,3 +43,38 @@ type FreebetContract @entity {
   affiliate: String
   manager: String
 }
+
+type CoreContract @entity {
+  id: ID!
+  liquidityPool: LiquidityPoolContract!
+  address: String!
+  type_: String!
+}
+
+type Condition @entity {
+  "Core Contract address + Condition Id"
+  id: ID!
+  core: CoreContract!
+  coreAddress: String!
+  conditionId: BigInt!
+  # game: Game!
+  # outcomes: [Outcome!]! @derivedFrom(field: "condition")
+  # outcomesIds: [BigInt!]
+  # wonOutcomes: [Outcome!]
+  # wonOutcomeIds: [BigInt!]
+  # margin: BigInt!
+  # reinforcement: BigInt!
+  # status: ConditionStatus!
+  # turnover: BigInt!
+  # provider: BigInt!
+  # createdBlockNumber: BigInt!
+  # createdBlockTimestamp: BigInt!
+  # createdTxHash: String!
+  # resolvedBlockNumber: BigInt
+  # resolvedBlockTimestamp: BigInt
+  # resolvedTxHash: String
+  # internalStartsAt: BigInt
+  # isExpressForbidden: Boolean!
+  # _updatedAt: BigInt!
+  # _winningOutcomesCount: Int!
+}

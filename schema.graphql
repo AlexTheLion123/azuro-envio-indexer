@@ -62,7 +62,7 @@ type Condition @entity {
   # outcomesIds: [BigInt!]
   # wonOutcomes: [Outcome!]
   # wonOutcomeIds: [BigInt!]
-  # margin: BigInt!
+  margin: BigInt!
   # reinforcement: BigInt!
   # status: ConditionStatus!
   # turnover: BigInt!
@@ -76,5 +76,5 @@ type Condition @entity {
   # internalStartsAt: BigInt
   # isExpressForbidden: Boolean!
   # _updatedAt: BigInt!
-  # _winningOutcomesCount: Int!
+  _winningOutcomesCount: Int!
 }
